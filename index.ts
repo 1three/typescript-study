@@ -1,103 +1,58 @@
 /*
-  ...
-  1. 괄호를 벗겨주는 ...spread
-  2. 여러 개 파라미터 ...rest
-*/
-
-// 1. ...spread
-const arr1 = [3, 4, 5];
-const arr2 = [1, 2, ...arr1];
-console.log(arr2);
-
-const obj1 = { name: "Kim", age: 25 };
-const obj2 = { ...obj1, birth: 991216 };
-console.log(obj2);
-
-// 2. ...rest: type 지정
-function allAdd(...x: number[]) {
-  console.log(x);
-}
-
-allAdd(1, 2, 3, 4, 5); // [1, 2, 3, 4, 5]
-
-/*
-  Destructuring
-  array, object 내 데이터를 변수로 생성
-*/
-
-// const 사람 = { student: true, age: 20 };
-// const student = 사람.student;
-// const age = 사람.age;
-const { student, age } = { student: true, age: 20 };
-const [hello, hundred] = ["안녕", 100];
-
-const person = { student: true, age: 20 };
-function 함수({ student, age }: { student: boolean; age: number }) {
-  console.log(student, age);
-}
-함수(person);
-
-/*
-  Narrowing 활용 1: &&(AND, 합집합, falsy 탐색)
+  접근제어자
   
-  falsy: false, 0, NaN, "", null, undefined, On(BigInt)
-  
-  1 && null && 3 // null
-  undefined && '안녕' && 100 // undefined
+  public: 클래스 외부에서 접근 가능 (기본 접근 제한자)
+  private: 오직 해당 클래스 내에서만 접근 가능, 외부나 파생 클래스에서 접근 불가
+  protected: 해당 클래스와 서브 클래스 내에서 접근 가능, 외부에서는 접근 불가
+  static: 인스턴스화 없이 클래스 자체에서 접근 가능, 인스턴스에서는 접근 불가
 */
-function printAll(str: string | undefined) {
-  // if, str 존재 or string type
-  if (str && typeof str === "string") {
-    console.log(str);
+class 사람 {
+  public 이름: string;
+  private 비밀번호: string;
+  protected 나이: number;
+  static 종: string = "호모 사피엔스"; // 부모클래스에 직접 부여 (상속 불가)
+
+  constructor(이름: string, 비밀번호: string, 나이: number) {
+    this.이름 = 이름;
+    this.비밀번호 = 비밀번호;
+    this.나이 = 나이;
+  }
+
+  public 인사하기() {
+    console.log(`안녕하세요, 제 이름은 ${this.이름} 입니다.`);
   }
 }
 
-/* Narrowing 활용 2: in */
-type Fish = { swim: string };
-type Bird = { fly: string };
-function behavior(animal: Fish | Bird) {
-  if ("swim" in animal) {
-    return animal.swim;
-  }
-  return animal.fly;
-}
-
-/*
-  Narrowing 활용 3: 인스턴스 instanceof 부모 (부모 클래스 확인)
-*/
-const 날짜 = new Date();
-if (날짜 instanceof Date) {
-  console.log("날짜의 부모 클래스: Date");
-}
-
-/*
-  Narrowing 활용 4: literal type (고유 속성을 이용한 type 추론)
-*/
-type Board = {
-  wheel: "4개";
-  color: string;
-};
-type Bike = {
-  wheel: "2개";
-  color: string;
-};
-
-function ride(x: Board | Bike) {
-  if (x.wheel === "4개") {
-    console.log("이 보드는 " + x.color);
-  } else {
-    console.log("이 바이크는 " + x.color);
+class 직장인 extends 사람 {
+  // extends 되어도 function으로 객체 생성 후 this로 호출 가능
+  경력여부() {
+    if (this.나이 < 30) {
+      console.log(`${this.이름}은 ${this.나이}세로 신입`);
+    } else {
+      console.log(`${this.이름}은 ${this.나이}세로 경력`);
+    }
   }
 }
 
-/*
-  never Type
-  1. return type: 절대 return 금지
-  2. 함수 종료 불가: endpoint 금지
-*/
-function 함수선언문() {
-  throw new Error(); // void type
+const 홍길동 = new 직장인("홍길동", "password1234!", 35);
+
+홍길동.인사하기();
+홍길동.경력여부();
+console.log(사람.종); // static: 부모클래스에 직접 접근
+
+/* 접근제어자 활용 */
+class Pro {
+  // skill = "JS";
+  // intro = `${this.skill} 전문가`;
+
+  // static: 부모클래스에 직접 접근
+  static skill = "JS";
+  intro = `${Pro.skill} 전문가`;
 }
-const 함수표현식 = function () {
-  throw new Error(); // never type
-};
+
+let 철수 = new Pro();
+console.log(철수);
+
+Pro.skill = "TS";
+let 미애 = new Pro();
+console.log(미애);
