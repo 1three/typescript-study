@@ -1,55 +1,103 @@
 /*
-  interface
-  1. 편리한 { object } type 지정
-  2. extends
-  2-1. 타입명 중복 가능
-  2-2. 속성 중복 불가능
+  ...
+  1. 괄호를 벗겨주는 ...spread
+  2. 여러 개 파라미터 ...rest
 */
-// type Square = { color: string; width: number };
-interface Square {
-  color: string;
-  width: number;
+
+// 1. ...spread
+const arr1 = [3, 4, 5];
+const arr2 = [1, 2, ...arr1];
+console.log(arr2);
+
+const obj1 = { name: "Kim", age: 25 };
+const obj2 = { ...obj1, birth: 991216 };
+console.log(obj2);
+
+// 2. ...rest: type 지정
+function allAdd(...x: number[]) {
+  console.log(x);
 }
 
-let 네모: Square = { color: "red", width: 100 };
-
-interface Student {
-  name: string;
-}
-
-interface Teacher extends Student {
-  // name: string;
-  age: number;
-}
-
-/* 여러 {object}를 갖는 [array] type 지정 */
-interface Cart {
-  product: string;
-  price: number;
-}
-
-let 장바구니: Cart[] = [
-  { product: "청소기", price: 7000 },
-  { product: "삼다수", price: 800 },
-];
+allAdd(1, 2, 3, 4, 5); // [1, 2, 3, 4, 5]
 
 /*
-    interface
+  Destructuring
+  array, object 내 데이터를 변수로 생성
+*/
+
+// const 사람 = { student: true, age: 20 };
+// const student = 사람.student;
+// const age = 사람.age;
+const { student, age } = { student: true, age: 20 };
+const [hello, hundred] = ["안녕", 100];
+
+const person = { student: true, age: 20 };
+function 함수({ student, age }: { student: boolean; age: number }) {
+  console.log(student, age);
+}
+함수(person);
+
+/*
+  Narrowing 활용 1: &&(AND, 합집합, falsy 탐색)
   
-    두 개의 매개변수를 받아
-    덧셈 결과를 반환하는 plus()  함수와
-    뺄셈 결과를 반환하는 minus() 함수를 가진 객체 생성
-  */
-interface Calc {
-  plus: (x: number, y: number) => number;
-  minus: (x: number, y: number) => number;
+  falsy: false, 0, NaN, "", null, undefined, On(BigInt)
+  
+  1 && null && 3 // null
+  undefined && '안녕' && 100 // undefined
+*/
+function printAll(str: string | undefined) {
+  // if, str 존재 or string type
+  if (str && typeof str === "string") {
+    console.log(str);
+  }
 }
 
-const math: Calc = {
-  plus(x, y) {
-    return x + y;
-  },
-  minus(x, y) {
-    return x - y;
-  },
+/* Narrowing 활용 2: in */
+type Fish = { swim: string };
+type Bird = { fly: string };
+function behavior(animal: Fish | Bird) {
+  if ("swim" in animal) {
+    return animal.swim;
+  }
+  return animal.fly;
+}
+
+/*
+  Narrowing 활용 3: 인스턴스 instanceof 부모 (부모 클래스 확인)
+*/
+const 날짜 = new Date();
+if (날짜 instanceof Date) {
+  console.log("날짜의 부모 클래스: Date");
+}
+
+/*
+  Narrowing 활용 4: literal type (고유 속성을 이용한 type 추론)
+*/
+type Board = {
+  wheel: "4개";
+  color: string;
+};
+type Bike = {
+  wheel: "2개";
+  color: string;
+};
+
+function ride(x: Board | Bike) {
+  if (x.wheel === "4개") {
+    console.log("이 보드는 " + x.color);
+  } else {
+    console.log("이 바이크는 " + x.color);
+  }
+}
+
+/*
+  never Type
+  1. return type: 절대 return 금지
+  2. 함수 종료 불가: endpoint 금지
+*/
+function 함수선언문() {
+  throw new Error(); // void type
+}
+const 함수표현식 = function () {
+  throw new Error(); // never type
 };
