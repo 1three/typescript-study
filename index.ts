@@ -1,40 +1,74 @@
-/* 
-  html 조작
-  document.getElementById()
-*/
-let 제목 = document.querySelector("#title");
+/* class type */
+class Person {
+  // 1. 필드 선언
+  name: string;
 
-// 제목.innerHTML = "안녕"; // Error: Element | null
-// Narrowing
-if (제목 instanceof HTMLElement) {
-  제목.innerHTML = "안녕";
+  // 2-1. 함수 선언
+  // constructor: { object } 반환
+  constructor(input: string) {
+    this.name = input;
+  }
+
+  // 2-2. 함수 선언
+  // prototype 내 함수
+  sayHello(input: string): string | void {
+    console.log("Hello. " + input + ".");
+  }
 }
+
+const human1 = new Person("Kim");
+const human2 = new Person("Lee");
+
+console.log(human1);
+console.log(human2);
+Person.prototype.sayHello("GGmj");
 
 /*
-  <a/>: HTMLAnchorElement
-  <img/>: HTMLImageElement
-  <h4/>: HTMLHeadingElement
-*/
-let 링크 = document.querySelector("#link");
-if (링크 instanceof HTMLAnchorElement) {
-  링크.href = "https://kakao.com";
-}
+    Car 클래스 생성
+  
+    모델/가격 정보를 담은 객체를 복사하는 기능
+    가격의 10%를 출력하는 tax 메소드
+  */
 
-// ?.: option
-// let 버튼 = document.getElementById("button");
-// 버튼?.addEventListener("click", function () {
-//   console.log("안녕");
-// });
-
-let 이미지 = document.getElementById("image");
-if (이미지 instanceof HTMLImageElement) {
-  이미지.src = "new.jpg";
-}
-
-// document.querySelectorAll(".className"): Select All class(className)
-let 에이 = document.querySelectorAll(".naver");
-에이.forEach((x) => {
-  if (에이 instanceof HTMLAnchorElement) {
-    에이.href = "https://kakao.com";
+class Car {
+  model: string;
+  price: number;
+  constructor(model: string, price: number) {
+    this.model = model;
+    this.price = price;
   }
-});
+  tax(): number {
+    return this.price / 10;
+  }
+}
+
+const car = new Car("소나타", 3000);
+console.log(car);
+console.log(car.tax());
+
+/*
+    문자와 숫자를 인자로 받아서 이를 각각 문자 배열과 숫자 배열로 저장하는 Word 클래스
+    입력 받을 수 있는 문자와 숫자의 개수 제한 X
+  
+    let obj = new Word('kim', 3, 5, 'park');
+    console.log(obj.num) // [3,5]
+    console.log(obj.str) // ['kim', 'park']
+  */
+class Word {
+  str: string[] = [];
+  num: number[] = [];
+  constructor(...arr: (string | number)[]) {
+    arr.forEach((input) => {
+      if (typeof input === "string") {
+        this.str.push(input);
+      }
+      if (typeof input === "number") {
+        this.num.push(input);
+      }
+    });
+  }
+}
+
+const obj = new Word("kim", 3, 5, "lee");
+console.log(obj.num);
+console.log(obj.str);
