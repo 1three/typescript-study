@@ -1,74 +1,55 @@
-/* class type */
-class Person {
-  // 1. 필드 선언
+/*
+  interface
+  1. 편리한 { object } type 지정
+  2. extends
+  2-1. 타입명 중복 가능
+  2-2. 속성 중복 불가능
+*/
+// type Square = { color: string; width: number };
+interface Square {
+  color: string;
+  width: number;
+}
+
+let 네모: Square = { color: "red", width: 100 };
+
+interface Student {
   name: string;
-
-  // 2-1. 함수 선언
-  // constructor: { object } 반환
-  constructor(input: string) {
-    this.name = input;
-  }
-
-  // 2-2. 함수 선언
-  // prototype 내 함수
-  sayHello(input: string): string | void {
-    console.log("Hello. " + input + ".");
-  }
 }
 
-const human1 = new Person("Kim");
-const human2 = new Person("Lee");
+interface Teacher extends Student {
+  // name: string;
+  age: number;
+}
 
-console.log(human1);
-console.log(human2);
-Person.prototype.sayHello("GGmj");
-
-/*
-    Car 클래스 생성
-  
-    모델/가격 정보를 담은 객체를 복사하는 기능
-    가격의 10%를 출력하는 tax 메소드
-  */
-
-class Car {
-  model: string;
+/* 여러 {object}를 갖는 [array] type 지정 */
+interface Cart {
+  product: string;
   price: number;
-  constructor(model: string, price: number) {
-    this.model = model;
-    this.price = price;
-  }
-  tax(): number {
-    return this.price / 10;
-  }
 }
 
-const car = new Car("소나타", 3000);
-console.log(car);
-console.log(car.tax());
+let 장바구니: Cart[] = [
+  { product: "청소기", price: 7000 },
+  { product: "삼다수", price: 800 },
+];
 
 /*
-    문자와 숫자를 인자로 받아서 이를 각각 문자 배열과 숫자 배열로 저장하는 Word 클래스
-    입력 받을 수 있는 문자와 숫자의 개수 제한 X
+    interface
   
-    let obj = new Word('kim', 3, 5, 'park');
-    console.log(obj.num) // [3,5]
-    console.log(obj.str) // ['kim', 'park']
+    두 개의 매개변수를 받아
+    덧셈 결과를 반환하는 plus()  함수와
+    뺄셈 결과를 반환하는 minus() 함수를 가진 객체 생성
   */
-class Word {
-  str: string[] = [];
-  num: number[] = [];
-  constructor(...arr: (string | number)[]) {
-    arr.forEach((input) => {
-      if (typeof input === "string") {
-        this.str.push(input);
-      }
-      if (typeof input === "number") {
-        this.num.push(input);
-      }
-    });
-  }
+interface Calc {
+  plus: (x: number, y: number) => number;
+  minus: (x: number, y: number) => number;
 }
 
-const obj = new Word("kim", 3, 5, "lee");
-console.log(obj.num);
-console.log(obj.str);
+const math: Calc = {
+  plus(x, y) {
+    return x + y;
+  },
+  minus(x, y) {
+    return x - y;
+  },
+};
