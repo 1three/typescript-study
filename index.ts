@@ -1,92 +1,161 @@
-/* type 지정: 자동 type 부여 */
-// let 이름 = "kim";
-// 이름 = "three";
-// let 나이 = 20;
-// 나이 = 25;
+/* Type 확정 */
+// 1. Narrowing: 타입 지정
+// 1-1. typeof 변수
+function plusOne(x: number | string) {
+  if (typeof x === "number") return x + 1;
+  else return x + 1;
+}
 
-/* type 지정: Union */
-// let 배열: (number | string)[] = [1, "2", 3];
-// let 객체: { data: number | string } = { data: "1" };
-// 객체 = { data: 1 };
+function temp(x: number | string) {
+  let array: number[] = [];
+  if (typeof x === "number") {
+    array[0] = x;
+  }
+}
 
-/* any & unknown */
-// any: 모든 타입 대입 가능
-// 타입 안정성 X
-// let temp: any = "kim";
-// temp = 1;
-// temp = undefined;
-// temp = [];
-// temp = {};
+// 1-2. 속성명 in 오브젝트자료
+// 1-3. 인스턴스 instanceof 부모
 
-// unknown: 모든 타입 대입 가능
-// 타입 안정성 O
-// 용도: 외부 데이터와 타입이 알려지지 않은 값 활용
-// let temp2: unknown = "kim";
-// temp2 = 1;
-// temp2 = undefined;
-// temp2 = [];
-// temp2 = {};
+// 2. Assertion: 타입 덮어쓰기
+// 2-1. 변수 as 타입 (용도: 타입 확정 시 / 들어올 타입이 확실할 때)
+function test(x: number | string) {
+  let array: number[] = [];
+  array[0] = x as number; // x의 type을 number로 덮어쓰기
+}
 
-/* type 지정 연습 */
-// let user: string = "kim";
-// let age: number | undefined = undefined;
-// let married: boolean = false;
-// let 철수: (string | number | undefined | boolean)[] = [user, age, married];
+/* 선생님의 과목 정보(문자열 또는 배열)을 입력받아 가르치는 과목 중 마지막 과목을 반환하는 함수 */
+type teacherType = { subject: string | string[] };
 
-// let 학교: {
-//   score: (number | boolean)[];
-//   teacher: string;
-//   friend: string | string[];
-// } = {
-//   score: [100, 97, 84],
-//   teacher: "Phil",
-//   friend: "John",
+function teacher(teacherType) {
+  if (typeof teacherType.subject === "string") {
+    return teacherType.subject;
+  } else if (Array.isArray(teacherType.subject)) {
+    const last = teacherType.subject.length - 1;
+    return teacherType.subject[last];
+  } else {
+    return "Error";
+  }
+}
+
+console.log(teacher({ subject: "math" }));
+console.log(teacher({ subject: ["science", "art", "korean"] }));
+
+/* type alias(변수) */
+type AnimalType = string | number | undefined;
+let 동물: AnimalType;
+
+// type 변수 활용: const
+const 출생지역 = "seoul";
+// 출생지역 = 'busan'; // 재할당 금지
+
+const 생일 = { month: 12, day: 16 };
+생일.month = 1; // obejct 수정 가능
+
+type BirthType = { readonly year: number; month: number; day: number };
+const 생년월일: BirthType = { year: 99, month: 12, day: 16 };
+// 생년월일.year = 98; // Error: readonly
+
+type Name = string;
+type Age = number;
+type NameAge = Name | Age;
+
+type PositionX = { x: number };
+type PositionY = { y: number };
+type XY = PositionX & PositionY;
+const 좌표: XY = { x: 1, y: 2 };
+
+// type 변수 특징: 재정의 불가
+// type Name = number;
+
+/* Literal Type: 특정 글자/숫자 가지도록 제한을 두는 Type */
+let 방향: "left" | "right";
+방향 = "left";
+
+type Hand = "가위" | "바위" | "보";
+function game(hand: Hand): Hand[] | void {}
+
+/*
+  as const
+  1. object의 value로 type 변경
+  2. object의 모든 속성 readonly 변경
+*/
+var 자료 = { name: "kim" } as const; // type "string" → "kim"
+function onlyKim(x: "kim") {} // type "kim"
+// onlyKim(자료.name);
+// 자료.name의 type = "string"
+// 자료.name의 값 = "kim"
+
+/* 
+  type alias
+  1. function type 지정
+  2. only 함수표현식 사용
+*/
+type NumberOut = (x: number, y: number) => number;
+let num: NumberOut = function (x, y) {
+  return x + y;
+};
+
+console.log(num(1, 2)); // 3
+
+/*
+  methods 내 type alias
+*/
+
+type Member = {
+  name: string;
+  age: number;
+  plusOne: (x: number) => number;
+  sayHello: () => void;
+};
+
+let memberInfo: Member = {
+  name: "kim",
+  age: 25,
+  plusOne(x) {
+    // common function
+    return x + 1;
+  },
+  sayHello: () => {
+    // arrow function
+    console.log("hello");
+  },
+};
+
+console.log(memberInfo.plusOne(1));
+memberInfo.sayHello();
+
+// type NumberOut = (x: number, y: number) => number;
+// let num: NumberOut = function (x, y) {
+//   return x + y;
 // };
 
-// 학교.score[4] = false;
-// 학교.friend = ["Lee", 학교.teacher];
+/* 입력받은 문자열의 시작 '0'을 제거하여 반환하는 함수 */
+type StringType = (input: string) => string;
+const cutZero: StringType = (input) => {
+  return input.startsWith("0") ? input.slice(1) : input;
+};
 
-/* 함수 type 지정 */
-// return number
-// function multi(x: number): number {
-//   return x * 2;
-// }
-
-// void: return 방지
-// function multi(x: number): void {
-//   console.log(x * 2);
-// }
-
-// 파라미터 option
-// x?: number === x: number | undefined
-// function multi(x?: number) {
-//   console.log(x * 2);
-// }
-
-/* 주어진 이름으로 인사하거나 이름 미제공 시 오류 메시지를 출력하는 함수 */
-function hello(name?: string) {
-  if (name) {
-    console.log("안녕하세요. " + name + "님.");
-  } else {
-    console.log("이름이 없습니다.");
-  }
+/* 입력받은 문자열 내 모든 "-"를 제거 및 숫자로 반환하는 함수 */
+// /-/g: 문자열 내 모든 "-", ""로 대체
+function removeDash(input: string): number {
+  return Number(input.replace(/-/g, ""));
 }
 
-/* 주어진 숫자나 문자열의 길이를 반환하는 함수 */
-function count(x: string | number): number {
-  //   if (typeof x === "string") {
-  //     console.log(x.length);
-  //   } else {
-  //     console.log(x.toString().length);
-  //   }
-  return x.toString().length;
+/*
+    문자열, 첫 번째 함수, 두 번째 함수를 파라미터로 가지는 함수
+    
+    문자열을 첫 번째 함수에 전달,
+    그 결과를 두 번째 함수에 전달,
+    그 결과를 콘솔에 출력하는 함수
+*/
+function applyFunction(
+  input: string,
+  stringFunc: (input: string) => string,
+  numberFunc: (input: string) => number
+) {
+  const result1 = stringFunc(input);
+  const result2 = numberFunc(result1);
+  console.log(result2);
 }
 
-/* 월소득, 집 보유 여부, 매력점수를 기반으로 600점 이상이면 "결혼 가능"을 반환하는 함수 */
-// "아무것도 반환하지 않는다" === "함수가 실행을 마치고 undefined를 반환한다"
-function marry(income: number, house: boolean, charm: string): string | void {
-  const result = income + (house ? 500 : 0) + (charm === "상" ? 100 : 0);
-  if (result >= 600) {
-    return "결혼 가능";
-  }
-}
+applyFunction("010-1111-2222", cutZero, removeDash);
