@@ -1,58 +1,65 @@
+/* import, export, namespace */
+// import { Car, Bike } from "./vehicle";
+
+// const 현대차: Car = { wheel: 4, model: "black" };
+// const 현대자전거: Bike = { wheel: 2, model: "white" };
+
+// console.log(현대차);
+// console.log(현대자전거);
+
 /*
-  접근제어자
+  Generic 함수
   
-  public: 클래스 외부에서 접근 가능 (기본 접근 제한자)
-  private: 오직 해당 클래스 내에서만 접근 가능, 외부나 파생 클래스에서 접근 불가
-  protected: 해당 클래스와 서브 클래스 내에서 접근 가능, 외부에서는 접근 불가
-  static: 인스턴스화 없이 클래스 자체에서 접근 가능, 인스턴스에서는 접근 불가
+  1. <>
+  2. 파라미터에 type 입력
 */
-class 사람 {
-  public 이름: string;
-  private 비밀번호: string;
-  protected 나이: number;
-  static 종: string = "호모 사피엔스"; // 부모클래스에 직접 부여 (상속 불가)
-
-  constructor(이름: string, 비밀번호: string, 나이: number) {
-    this.이름 = 이름;
-    this.비밀번호 = 비밀번호;
-    this.나이 = 나이;
-  }
-
-  public 인사하기() {
-    console.log(`안녕하세요, 제 이름은 ${this.이름} 입니다.`);
-  }
+function returnFirst1(x: unknown[]) {
+  return x[0];
 }
 
-class 직장인 extends 사람 {
-  // extends 되어도 function으로 객체 생성 후 this로 호출 가능
-  경력여부() {
-    if (this.나이 < 30) {
-      console.log(`${this.이름}은 ${this.나이}세로 신입`);
-    } else {
-      console.log(`${this.이름}은 ${this.나이}세로 경력`);
-    }
-  }
+const temp1 = returnFirst1([4, 2]);
+console.log(temp1);
+// console.log(temp + 1); // Error: not number, just unknown type
+
+function returnFirst2<MyType>(x: MyType[]): MyType {
+  return x[0];
+}
+// 사용자가 입력한 <number> // MyType = number
+// 사용자가 입력한 <string> // MyType = string
+// parameter, return 모두 적용
+
+const temp2 = returnFirst2<number>([6, 4, 2]);
+console.log(temp2); // 6
+console.log(temp2 + 1); // 7
+
+const temp3 = returnFirst2<string>(["2", "4", "6"]);
+console.log(temp3); // 2
+console.log(temp3 + 1); // 21
+
+/*
+  type parameter 제한: extends
+*/
+function minus<MyType extends number>(x: MyType) {
+  return x - 1;
+}
+const 뺄셈 = minus<number>(5);
+console.log(뺄셈); // 4
+
+interface LengthCheck {
+  length: number;
+}
+// type LengthCheck = { length: number };
+
+function returnLength<MyType extends LengthCheck>(input: MyType) {
+  return input.length;
 }
 
-const 홍길동 = new 직장인("홍길동", "password1234!", 35);
+console.log(String.prototype);
+console.log(Number.prototype);
 
-홍길동.인사하기();
-홍길동.경력여부();
-console.log(사람.종); // static: 부모클래스에 직접 접근
+const 길이1 = returnLength<string>("hello");
+console.log(길이1);
+// string type: length(프로토타입) 보유
 
-/* 접근제어자 활용 */
-class Pro {
-  // skill = "JS";
-  // intro = `${this.skill} 전문가`;
-
-  // static: 부모클래스에 직접 접근
-  static skill = "JS";
-  intro = `${Pro.skill} 전문가`;
-}
-
-let 철수 = new Pro();
-console.log(철수);
-
-Pro.skill = "TS";
-let 미애 = new Pro();
-console.log(미애);
+// const 길이2 = returnLength<number>(1234);
+// number type: length(프로토타입) 미보유
